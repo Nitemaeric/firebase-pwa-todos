@@ -39,7 +39,14 @@ const NewTodo = () => {
     setText(e.target.value)
   }
 
-  function handleClick () {
+  function handleInputKeyUp (e) {
+    if (e.keyCode === 13) {
+      e.preventDefault()
+      handleSubmit()
+    }
+  }
+
+  function handleSubmit () {
     if (text.trim() !== '') {
       db.collection('todos').add({
         text,
@@ -65,10 +72,11 @@ const NewTodo = () => {
           className={input}
           value={text}
           onChange={handleTextChange}
+          onKeyUp={handleInputKeyUp}
           autoFocus
         />
 
-        <Button variant='contained' color='primary' fullWidth onClick={handleClick}>
+        <Button variant='contained' color='primary' fullWidth onClick={handleSubmit}>
           Add Todo
         </Button>
       </Drawer>

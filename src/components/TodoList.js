@@ -15,25 +15,16 @@ const TodoList = () => {
     return (e) => {
       db.doc(`todos/${todo.id}`).update({ checked: !todo.checked })
         .then(() => {
-          if (clearTimeout) {
-            clearTimeout()
-          }
-
           clearTimeout = setTimeout(() => {
-            const currentTodo = todos.find(t => t.id === todo.id)
-            console.log(currentTodo)
-
-            if (currentTodo.checked) {
-              db.doc(`todos/${todo.id}`).update({ visible: false })
-            }
+            db.doc(`todos/${todo.id}`).update({ visible: false })
           }, 500)
         })
     }
   }
 
-  // useEffect(() => {
-  //   return clearTimeout
-  // }, [clearTimeout])
+  useEffect(() => {
+    return clearTimeout
+  }, [clearTimeout])
 
   useEffect(() => {
     return db.collection('todos')
