@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { Container } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 
-function App() {
+import 'firebaseui/dist/firebaseui.css'
+
+import TopNavigation from './components/TopNavigation'
+import TodoList from './components/TodoList'
+import NewTodo from './components/NewTodo'
+import AuthenticationDialog from './components/AuthenticationDialog'
+import useVisibility from './hooks/useVisibility'
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: 0
+  },
+  spacer: theme.mixins.toolbar
+}))
+
+const App = () => {
+  const classes = useStyles()
+
+  const [authDialogOpen, {
+    handleOpen: handleAuthDialogOpen,
+    handleClose: handleAuthDialogClose
+  }] = useVisibility(false)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Container maxWidth='sm' className={classes.root}>
+      <TopNavigation onClickLogin={handleAuthDialogOpen} />
+      <div className={classes.spacer} />
+
+      <TodoList />
+
+      <NewTodo />
+      <AuthenticationDialog open={authDialogOpen} onClose={handleAuthDialogClose} />
+    </Container>
+  )
 }
 
-export default App;
+export default App
