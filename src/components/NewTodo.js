@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import firebaseApp, { firebase } from '../utils/firebase'
 import useVisibility from '../hooks/useVisibility'
+import useAuthentication from '../hooks/useAuthentication'
 
 const db = firebaseApp.firestore()
 
@@ -32,6 +33,7 @@ const useStyles = makeStyles(theme => ({
 const NewTodo = () => {
   const { fab, input, ...drawerClasses } = useStyles()
   const [text, setText] = useState('')
+  const user = useAuthentication()
 
   const [open, { handleOpen, handleClose }] = useVisibility(false)
 
@@ -48,7 +50,7 @@ const NewTodo = () => {
 
   function handleSubmit () {
     if (text.trim() !== '') {
-      db.collection('todos').add({
+      db.collection(`users/${user.uid}/todos`).add({
         text,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         checked: false,
@@ -60,28 +62,32 @@ const NewTodo = () => {
     handleClose()
   }
 
-  return (
-    <>
-      <Fab color='primary' aria-label='add' className={fab} onClick={handleOpen}>
-        <AddIcon />
-      </Fab>
+  if (user) {
+    return (
+      <>
+        <Fab color='primary' aria-label='add' className={fab} onClick={handleOpen}>
+          <AddIcon />
+        </Fab>
 
-      <Drawer anchor='bottom' open={open} onClose={handleClose} classes={drawerClasses}>
-        <input
-          type='text'
-          className={input}
-          value={text}
-          onChange={handleTextChange}
-          onKeyUp={handleInputKeyUp}
-          autoFocus
-        />
+        <Drawer anchor='bottom' open={open} onClose={handleClose} classes={drawerClasses}>
+          <input
+            type='text'
+            className={input}
+            value={text}
+            onChange={handleTextChange}
+            onKeyUp={handleInputKeyUp}
+            autoFocus
+          />
 
-        <Button variant='contained' color='primary' fullWidth onClick={handleSubmit}>
-          Add Todo
-        </Button>
-      </Drawer>
-    </>
-  )
+          <Button variant='contained' color='primary' fullWidth onClick={handleSubmit}>
+            Add Todo
+          </Button>
+        </Drawer>
+      </>
+    )
+  }
+
+  return null
 }
 
 export default NewTodo

@@ -4,20 +4,22 @@ import {
 } from '@material-ui/core'
 
 import firebaseApp from '../utils/firebase'
+import useAuthentication from '../hooks/useAuthentication'
 
 const db = firebaseApp.firestore()
 
 const TodoList = () => {
+  const user = useAuthentication()
   const [todos, setTodos] = useState([])
   let clearTimeout
 
   function handleClick (todo) {
     return (e) => {
-      db.doc(`todos/${todo.id}`).update({ checked: !todo.checked })
+      db.doc(`users/${user.uid}/todos/${todo.id}`).update({ checked: !todo.checked })
         .then(() => {
           clearTimeout = setTimeout(() => {
-            db.doc(`todos/${todo.id}`).update({ visible: false })
-          }, 500)
+            db.doc(`users/${user.uid}/todos/${todo.id}`).update({ visible: false })
+          }, 300)
         })
     }
   }
@@ -27,14 +29,18 @@ const TodoList = () => {
   }, [clearTimeout])
 
   useEffect(() => {
-    return db.collection('todos')
+    if (user) {
+      return db.collection(`users/${user.uid}/todos`)
       .orderBy('timestamp', 'asc')
       .onSnapshot(snapshot => {
-        const newTodos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        const newTodos = snapshot.docs.map(doc => ({
+          id: doc.id, ...doc.data()
+        }))
 
         setTodos(newTodos)
       })
-  }, [])
+    }
+  }, [user])
 
   return (
     <List>

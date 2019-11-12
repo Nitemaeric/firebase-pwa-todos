@@ -1,68 +1,33 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Mastering Firebase for Web Developers
 
-## Available Scripts
+This project is to be used alongside the "Mastering Firebase for Web Developers" workshop by Daniel Dye.
 
-In the project directory, you can run:
+For this project, we will be building a Firebase-enabled Todo List app.
 
-### `yarn start`
+### Introduction
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. What is Firebase?
+1. When do I need Firebase?
+1. What is a Progressive Web App?
+1. What's the big deal about PWAs?
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+### Workshop
 
-### `yarn test`
+1. Setup our Firebase Project
+1. Setup our Project
+1. Firebase Databases
+1. Create a Firestore Database
+1. Let's add some Todos
+1. Prerequisite: Setting up Firebase
+1. Firebase Hosting
+1. Firebase Authentication
+1. Adding the FirebaseUI package
+1. Checking the user auth state
+1. Restructuring our database to support multiple users
+1. Adding Firestore rules
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## How to
 
-### `yarn build`
+To emphasize on learning Firebase, I have setup multiple `// TODO: ` comments across the codebase for attendees to fill in Firebase logic.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+[Link to Slides](#link-to-slides-should-go-here)
