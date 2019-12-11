@@ -117,7 +117,6 @@ const TodoList = () => {
         action={
           <Button
             color='primary'
-            size='small'
             onClick={handleUndo}
           >
             UNDO
