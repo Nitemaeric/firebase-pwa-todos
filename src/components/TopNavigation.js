@@ -11,7 +11,8 @@ import { useAuthentication } from 'hooks/authentication'
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    zIndex: 1
   },
   title: {
     flexGrow: 1

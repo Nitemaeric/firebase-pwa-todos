@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
-import { Drawer, Button, Fab, InputBase } from '@material-ui/core'
-import { Add as AddIcon } from '@material-ui/icons'
+import React, { useState, useEffect } from 'react'
+import {
+  Drawer, Button, Fab, InputBase, InputAdornment, IconButton,
+  LinearProgress
+} from '@material-ui/core'
+import { Add as AddIcon, AttachFile as AttachFileIcon } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
 
 import firebaseApp, { firebase } from 'utils/firebase'
@@ -9,6 +12,7 @@ import { useAuthentication } from 'hooks/authentication'
 import { useInterface } from 'hooks/interface'
 
 const db = firebaseApp.firestore()
+const storage = firebaseApp.storage()
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -26,14 +30,21 @@ const useStyles = makeStyles(theme => ({
   input: {
     border: '1px solid',
     borderColor: theme.palette.primary.main,
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(1, 0),
     marginBottom: theme.spacing(2)
+  },
+
+  linearProgress: {
+    marginBottom: theme.spacing(1)
   }
 }))
 
 const NewTodo = () => {
-  const { fab, input, ...drawerClasses } = useStyles()
+  const { fab, input, linearProgress, ...drawerClasses } = useStyles()
   const [text, setText] = useState('')
+  const [uploadTask, setUploadTask] = useState()
+  const [fileUrl, setFileUrl] = useState()
+  const [progress, setProgress] = useState(0)
 
   const [state, { open, close }] = useInterface()
   const [currentUser] = useAuthentication()
@@ -51,15 +62,22 @@ const NewTodo = () => {
 
   function handleSubmit () {
     if (text.trim() !== '') {
-      db.collection(`users/${currentUser.uid}/todos`).add({
+      let data = {
         text,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         checked: false,
         visible: true
-      })
+      }
+
+      if (fileUrl) {
+        data = { ...data, fileUrl }
+      }
+
+      db.collection(`users/${currentUser.uid}/todos`).add(data)
     }
 
     setText('')
+    setProgress(0)
     handleClose()
   }
 
@@ -71,6 +89,32 @@ const NewTodo = () => {
     close(NEW_TODO_DRAWER_OPEN)
   }
 
+  function handleFile (e) {
+    const file = e.target.files[0]
+
+    setUploadTask(storage.ref().child(`${currentUser.id}/${file.name}`).put(file))
+  }
+
+  useEffect(() => {
+    if (uploadTask) {
+      return uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+        snapshot => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          setProgress(progress)
+        },
+        error => {
+
+        },
+        () => {
+          uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+            setFileUrl(downloadURL)
+          })
+        }
+      )
+    }
+  }, [uploadTask])
+
   if (currentUser) {
     return (
       <>
@@ -79,12 +123,33 @@ const NewTodo = () => {
         </Fab>
 
         <Drawer anchor='bottom' open={state.newTodoDrawerOpen} onClose={handleClose} classes={drawerClasses}>
+          {
+            <LinearProgress variant='determinate' value={progress} className={linearProgress} />
+          }
+
           <InputBase
             className={input}
             value={text}
             onChange={handleTextChange}
             onKeyUp={handleInputKeyUp}
             autoFocus
+            fullWidth
+            startAdornment={
+              <InputAdornment position='start'>
+                <input
+                  accept='image/*'
+                  id='icon-button-photo'
+                  onChange={handleFile}
+                  type='file'
+                  style={{ display: 'none' }}
+                />
+                <label htmlFor='icon-button-photo'>
+                  <IconButton component='span'>
+                    <AttachFileIcon />
+                  </IconButton>
+                </label>
+              </InputAdornment>
+            }
           />
 
           <Button variant='contained' color='primary' fullWidth onClick={handleSubmit}>

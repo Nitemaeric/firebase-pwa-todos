@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import {
-  List, ListItem, ListItemIcon, ListItemText, Checkbox, Collapse,
-  Snackbar, Button
+  List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Checkbox,
+  Collapse, Snackbar, Button, IconButton
 } from '@material-ui/core'
+import { Visibility as VisibilityIcon } from '@material-ui/icons'
+import Carousel, { ModalGateway, Modal } from 'react-images'
 
 import firebaseApp from 'utils/firebase'
 import { useAuthentication } from 'hooks/authentication'
@@ -13,6 +15,7 @@ const TodoList = () => {
   const [currentUser] = useAuthentication()
   const [todos, setTodos] = useState([])
   const [clickedTodo, setClickedTodo] = useState()
+  const [visibleTodo, setVisibleTodo] = useState()
 
   function handleClick (todo) {
     return (e) => {
@@ -25,8 +28,18 @@ const TodoList = () => {
     }
   }
 
+  function handleView (todo) {
+    return (e) => {
+      setVisibleTodo(todo)
+    }
+  }
+
   function handleClose () {
     setClickedTodo(null)
+  }
+
+  function handleCloseModal () {
+    setVisibleTodo(null)
   }
 
   function handleUndo () {
@@ -70,12 +83,31 @@ const TodoList = () => {
                     />
                   </ListItemIcon>
                   <ListItemText primary={todo.text} />
+                  {
+                    todo.fileUrl && (
+                      <ListItemSecondaryAction>
+                        <IconButton edge='end' onClick={handleView(todo)}>
+                          <VisibilityIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    )
+                  }
                 </ListItem>
               </Collapse>
             )
           })
         }
       </List>
+
+      <ModalGateway>
+        {
+          !!visibleTodo ? (
+            <Modal closeOnBackdropClick onClose={handleCloseModal}>
+              <Carousel views={[{ src: visibleTodo.fileUrl }]} onClick={() => console.log('clicked')} />
+            </Modal>
+          ) : null
+        }
+      </ModalGateway>
 
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
