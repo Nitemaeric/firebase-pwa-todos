@@ -4,13 +4,13 @@ import firebaseApp, { firebase } from '../utils/firebase'
 
 const db = firebaseApp.firestore()
 
-const useAuthentication = (defaultValue) => {
+export const useAuthentication = (defaultValue) => {
+  const [loading, setLoading] = useState(true)
   const [user, setUser] = useState()
 
   useEffect(() => {
-    return firebase.auth().onAuthStateChanged((user) => {
+    return firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        console.log(user)
         setUser(user)
         const { uid, displayName, email, photoURL } = user
 
@@ -34,12 +34,12 @@ const useAuthentication = (defaultValue) => {
           }
         })
       } else {
-        setUser(undefined)
+        setUser(null)
       }
+
+      setLoading(false)
     })
   }, [])
 
-  return user
+  return [user, { loading }]
 }
-
-export default useAuthentication

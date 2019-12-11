@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import { Drawer, Button, Fab } from '@material-ui/core'
+import { Drawer, Button, Fab, InputBase } from '@material-ui/core'
 import { Add as AddIcon } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
 
-import firebaseApp, { firebase } from '../utils/firebase'
-import useVisibility from '../hooks/useVisibility'
-import useAuthentication from '../hooks/useAuthentication'
+import firebaseApp, { firebase } from 'utils/firebase'
+import { NEW_TODO_DRAWER_OPEN } from 'contexts/interface'
+import { useAuthentication } from 'hooks/authentication'
+import { useInterface } from 'hooks/interface'
 
 const db = firebaseApp.firestore()
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    // minHeight: '75vh',
     borderTopLeftRadius: theme.spacing(),
     borderTopRightRadius: theme.spacing(),
     padding: theme.spacing(2)
@@ -24,8 +24,9 @@ const useStyles = makeStyles(theme => ({
   },
 
   input: {
-    border: '1px solid #ECEFF1',
-    padding: theme.spacing(),
+    border: '1px solid',
+    borderColor: theme.palette.primary.main,
+    padding: theme.spacing(0, 1),
     marginBottom: theme.spacing(2)
   }
 }))
@@ -33,9 +34,9 @@ const useStyles = makeStyles(theme => ({
 const NewTodo = () => {
   const { fab, input, ...drawerClasses } = useStyles()
   const [text, setText] = useState('')
-  const user = useAuthentication()
 
-  const [open, { handleOpen, handleClose }] = useVisibility(false)
+  const [state, { open, close }] = useInterface()
+  const [currentUser] = useAuthentication()
 
   function handleTextChange (e) {
     setText(e.target.value)
@@ -50,7 +51,7 @@ const NewTodo = () => {
 
   function handleSubmit () {
     if (text.trim() !== '') {
-      db.collection(`users/${user.uid}/todos`).add({
+      db.collection(`users/${currentUser.uid}/todos`).add({
         text,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         checked: false,
@@ -62,16 +63,23 @@ const NewTodo = () => {
     handleClose()
   }
 
-  if (user) {
+  function handleOpen () {
+    open(NEW_TODO_DRAWER_OPEN)
+  }
+
+  function handleClose () {
+    close(NEW_TODO_DRAWER_OPEN)
+  }
+
+  if (currentUser) {
     return (
       <>
         <Fab color='primary' aria-label='add' className={fab} onClick={handleOpen}>
           <AddIcon />
         </Fab>
 
-        <Drawer anchor='bottom' open={open} onClose={handleClose} classes={drawerClasses}>
-          <input
-            type='text'
+        <Drawer anchor='bottom' open={state.newTodoDrawerOpen} onClose={handleClose} classes={drawerClasses}>
+          <InputBase
             className={input}
             value={text}
             onChange={handleTextChange}

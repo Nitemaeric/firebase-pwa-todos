@@ -4,9 +4,10 @@ import {
   Menu, MenuItem
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { Link } from 'react-router-dom'
 
-import { firebase } from '../utils/firebase'
-import useAuthentication from '../hooks/useAuthentication'
+import { firebase } from 'utils/firebase'
+import { useAuthentication } from 'hooks/authentication'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -14,16 +15,17 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1
-  }
+  },
+  spacer: theme.mixins.toolbar
 }))
 
-const TopNavigation = ({ onClickLogin }) => {
+const TopNavigation = () => {
   const classes = useStyles()
-  const user = useAuthentication()
+  const [currentUser] = useAuthentication()
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handleProfileMenuOpen = event => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget)
   }
 
   const handleMenuClose = () => {
@@ -36,44 +38,47 @@ const TopNavigation = ({ onClickLogin }) => {
   }
 
   return (
-    <AppBar position='fixed' className={classes.root}>
-      <Toolbar>
-        <Typography variant='h6' className={classes.title}>
-          <span role='img' aria-label='Fire'>🔥</span> Todo List
-        </Typography>
+    <>
+      <AppBar position='fixed' className={classes.root}>
+        <Toolbar>
+          <Typography variant='h6' className={classes.title}>
+            <span role='img' aria-label='Fire'>🔥</span> Todo List
+          </Typography>
 
-        {
-          user ? (
-            <IconButton
-              edge='end'
-              aria-label='account of current user'
-              // aria-controls={menuId}
-              aria-haspopup='true'
-              onClick={handleProfileMenuOpen}
-              color='inherit'
-            >
-              <Avatar
-                src={user.photoURL}
-                style={{ height: '32px', width: '32px' }}
-              />
-            </IconButton>
-          ) : (
-            <Button color='inherit' onClick={onClickLogin}>Sign In</Button>
-          )
-        }
+          {
+            currentUser ? (
+              <IconButton
+                edge='end'
+                aria-label='account of current user'
+                aria-haspopup='true'
+                onClick={handleProfileMenuOpen}
+                color='inherit'
+              >
+                <Avatar
+                  src={currentUser.photoURL}
+                  style={{ height: '32px', width: '32px' }}
+                />
+              </IconButton>
+            ) : (
+              <Button color='inherit' component={Link} to='/login'>Login</Button>
+            )
+          }
 
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          keepMounted
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          open={!!anchorEl}
-          onClose={handleMenuClose}
-        >
-          <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
-        </Menu>
-      </Toolbar>
-    </AppBar>
+          <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            keepMounted
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            open={!!anchorEl}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+          </Menu>
+        </Toolbar>
+      </AppBar>
+
+      <div className={classes.spacer} />
+    </>
   )
 }
 
