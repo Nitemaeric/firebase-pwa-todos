@@ -92,7 +92,7 @@ const NewTodo = () => {
   function handleFile (e) {
     const file = e.target.files[0]
 
-    setUploadTask(storage.ref().child(`${currentUser.id}/${file.name}`).put(file))
+    setUploadTask(storage.ref().child(`users/${currentUser.uid}/${file.name}`).put(file))
   }
 
   useEffect(() => {
